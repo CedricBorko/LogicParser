@@ -34,7 +34,7 @@ class Interpreter:
         elif node.operator.type_ == TokenType.EQUIVALENCE:
             return bool((left and right) or (not left and not right))
         elif node.operator.type_ == TokenType.IMPLICATION:
-            return bool((left and right) or (not left and right) or (not left and not right))
+            return bool(not(left and not right))
 
     def read_UnaryOperationNode(self, node):
         value = self.read(node.literal)

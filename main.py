@@ -19,8 +19,9 @@ def calculate_result(res, literals):
         interpreter = Interpreter(translator)
         truth_table.append([int(interpreter.read(res)), [translator[literal] for literal in literals]])
 
+    print(' '.join(literals), "S")
     for entry in truth_table:
-        print(entry)
+        print(' '.join(map(str, entry[1])), entry[0])
 
 
 def equivalence(a, b):

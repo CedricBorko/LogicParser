@@ -18,11 +18,20 @@ class Parser:
         return self.or_operator()
 
     def or_operator(self):
+        left = self.implication()
+
+        while self.current_token is not None and self.current_token.type_ in (TokenType.OR, TokenType.EQUIVALENCE,):
+            op = self.current_token
+            self.advance()
+            right = self.implication()
+            left = BinaryOperationNode(left, op, right)
+
+        return left
+
+    def implication(self):
         left = self.and_operator()
 
-        while self.current_token is not None and self.current_token.type_ in (TokenType.OR,
-                                                                              TokenType.EQUIVALENCE,
-                                                                              TokenType.IMPLICATION):
+        while self.current_token is not None and self.current_token.type_ in (TokenType.IMPLICATION, ):
             op = self.current_token
             self.advance()
             right = self.and_operator()
