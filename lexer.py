@@ -49,7 +49,7 @@ class Lexer:
 
             elif self.current_token in string.ascii_letters:
                 next_ = self.peek()
-                if next_ is not None and next_ not in "+^>=)":
+                if next_ is not None and next_ not in "+^>=*)":
                     tokens.append(Token(TokenType.LITERAL, self.current_token))
                     tokens.append(Token(TokenType.AND))
                 else:
