@@ -25,15 +25,15 @@ class TokenType:
 
 OPERATORS = {
 
-        "*": TokenType.AND,
-        "+": TokenType.OR,
-        "^": TokenType.XOR,
-        "!": TokenType.NOT,
-        ">": TokenType.IMPLICATION,
-        "=": TokenType.EQUIVALENCE,
-        "0": TokenType.FALSE,
-        "1": TokenType.TRUE,
-        "(": TokenType.LPAREN,
-        ")": TokenType.RPAREN
+    "*": TokenType.AND,
+    "+": TokenType.OR,
+    "^": TokenType.XOR,
+    "!": TokenType.NOT,
+    ">": TokenType.IMPLICATION,
+    "=": TokenType.EQUIVALENCE,
+    "0": TokenType.FALSE,
+    "1": TokenType.TRUE,
+    "(": TokenType.LPAREN,
+    ")": TokenType.RPAREN
 
 }

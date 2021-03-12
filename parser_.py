@@ -1,4 +1,4 @@
-from node import BinaryOperationNode, UnaryOperationNode, LiteralNode
+from node import BinaryOperationNode, UnaryOperationNode, LiteralNode, BoolNode
 from token import TokenType
 
 
@@ -7,6 +7,7 @@ class Parser:
         self.tokens = tokens
         self.current_token = None
         self.index = -1
+        self.literals = []
         self.advance()
 
     def advance(self, steps=1):
@@ -19,8 +20,10 @@ class Parser:
     def or_operator(self):
         left = self.and_operator()
 
-        while self.current_token in (TokenType.OR,):
-            op = TokenType.OR
+        while self.current_token is not None and self.current_token.type_ in (TokenType.OR,
+                                                                              TokenType.EQUIVALENCE,
+                                                                              TokenType.IMPLICATION):
+            op = self.current_token
             self.advance()
             right = self.and_operator()
             left = BinaryOperationNode(left, op, right)
@@ -30,7 +33,7 @@ class Parser:
     def and_operator(self):
         left = self.negation()
 
-        while self.current_token in (TokenType.AND, TokenType.XOR):
+        while self.current_token is not None and self.current_token.type_ in (TokenType.AND, TokenType.XOR):
             op = self.current_token
             self.advance()
             right = self.negation()
@@ -52,16 +55,18 @@ class Parser:
 
         if token.type_ == TokenType.LITERAL:
             self.advance()
+            if token.value not in self.literals:
+                self.literals.append(token.value)
             return LiteralNode(token)
 
         elif token.type_ in (TokenType.TRUE, TokenType.FALSE):
-            print("TRUE or FALSE")
             self.advance()
+            return BoolNode(token)
 
         elif token.type_ == TokenType.LPAREN:
             self.advance()
             expr = self.or_operator()
 
-            if self.current_token == TokenType.RPAREN:
+            if self.current_token.type_ == TokenType.RPAREN:
                 self.advance()
                 return expr
