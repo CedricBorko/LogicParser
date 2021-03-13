@@ -40,15 +40,27 @@ class Parser:
         return left
 
     def and_operator(self):
+        left = self.xor()
+
+        while self.current_token is not None and self.current_token.type_ in (TokenType.AND, ):
+            op = self.current_token
+            self.advance()
+            right = self.xor()
+            left = BinaryOperationNode(left, op, right)
+
+        return left
+
+    def xor(self):
         left = self.negation()
 
-        while self.current_token is not None and self.current_token.type_ in (TokenType.AND, TokenType.XOR):
+        while self.current_token is not None and self.current_token.type_ in (TokenType.XOR, ):
             op = self.current_token
             self.advance()
             right = self.negation()
             left = BinaryOperationNode(left, op, right)
 
         return left
+
 
     def negation(self):
         token = self.current_token

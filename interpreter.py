@@ -19,7 +19,9 @@ class Interpreter:
 
     @staticmethod
     def read_BoolNode(node):
-        return node.token.value
+        if node.token.type_ == TokenType.TRUE:
+            return True
+        return False
 
     def read_BinaryOperationNode(self, node):
         left = self.read(node.left)
