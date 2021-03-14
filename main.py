@@ -8,38 +8,39 @@ from token import OPERATORS
 print(OPERATORS)
 
 
-def calculate_result(res, literals, vertical=False):
+def calculate_result(res, literals):
     combinations = list(itertools.product([1, 0], repeat=len(literals)))
     truth_table = []
 
-    if vertical:
-        for i in range(len(combinations) - 1, -1, -1):
-            translator = {}
-            for key_ in literals:
-                translator[key_] = combinations[i][literals.index(key_)]
+    for i in range(len(combinations) - 1, -1, -1):
+        translator = {}
+        for key_ in literals:
+            translator[key_] = combinations[i][literals.index(key_)]
 
-            interpreter = Interpreter(translator)
-            truth_table.append([int(interpreter.read(res)), [translator[literal] for literal in literals]])
+        interpreter = Interpreter(translator)
+        truth_table.append([int(interpreter.read(res)), [translator[literal] for literal in literals]])
 
-        print(' '.join(literals), "S")
-        for entry in truth_table:
-            print(' '.join(map(str, entry[1])), entry[0])
+    knf_form, dnf_form = normal_forms(truth_table, literals)
+    print("KNF:", knf_form)
+    print("DNF:", dnf_form)
+    print(' '.join(literals), "S")
+    for entry in truth_table:
+        print(' '.join(map(str, entry[1])), entry[0])
 
-    else:
-        for i in range(len(combinations) - 1, -1, -1):
-            translator = {}
-            for key_ in literals:
-                translator[key_] = combinations[i][literals.index(key_)]
-            interpreter = Interpreter(translator)
-            truth_table.append(int(interpreter.read(res)))
 
-        r = [literals[i] + " " + ' '.join(map(str, [c[i] for c in reversed(combinations)]))
-                                                         for i in range(len(literals))]
+def normal_forms(table, literals):
+    knf_result = []
+    dnf_result = []
+    for item in table:
 
-        for e in r:
-            print(e)
+        if item[0] == 0:
+            sequence = "(" + '∨'.join([literals[i] if item[1][i] == 0 else "¬" + literals[i] for i in range(len(literals))]) + ")"
+            knf_result.append(sequence)
+        else:
+            sequence = "(" + ''.join([literals[i] if item[1][i] == 1 else "¬" + literals[i] for i in range(len(literals))]) + ")"
+            dnf_result.append(sequence)
 
-        print("f" + " " + ' '.join(map(str, truth_table)))
+    return '∧'.join(knf_result), '∨'.join(dnf_result)
 
 
 while True:
@@ -48,4 +49,4 @@ while True:
     tokens = lexer.generate_tokens()
     parser = Parser(tokens)
     result = parser.parse()
-    calculate_result(result, sorted(parser.literals), True)
+    calculate_result(result, sorted(parser.literals))
