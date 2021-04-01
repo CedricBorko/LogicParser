@@ -15,12 +15,23 @@ class Parser:
         self.current_token = self.tokens[self.index] if self.index < len(self.tokens) else None
 
     def parse(self):
-        return self.or_operator()
+        return self.equivalence()
 
-    def or_operator(self):
+    def equivalence(self):
         left = self.implication()
 
-        while self.current_token is not None and self.current_token.type_ in (TokenType.OR, TokenType.EQUIVALENCE, ):
+        while self.current_token is not None and self.current_token.type_ in (TokenType.EQUIVALENCE,):
+            op = self.current_token
+            self.advance()
+            right = self.implication()
+            left = BinaryOperationNode(left, op, right)
+
+        return left
+
+    def implication(self):
+        left = self.or_operator()
+
+        while self.current_token is not None and self.current_token.type_ in (TokenType.IMPLICATION,):
             op = self.current_token
             self.advance()
             right = self.or_operator()
@@ -28,10 +39,10 @@ class Parser:
 
         return left
 
-    def implication(self):
+    def or_operator(self):
         left = self.and_operator()
 
-        while self.current_token is not None and self.current_token.type_ in (TokenType.IMPLICATION,):
+        while self.current_token is not None and self.current_token.type_ in (TokenType.OR, ):
             op = self.current_token
             self.advance()
             right = self.and_operator()
